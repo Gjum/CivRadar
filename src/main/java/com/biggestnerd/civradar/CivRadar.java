@@ -100,7 +100,7 @@ public class CivRadar {
 	
 	@SubscribeEvent
 	public void onTick(ClientTickEvent event) {
-		if(mc.theWorld != null) {
+		if(mc.world != null) {
 			if(mc.isSingleplayer()) {
 				String worldName = mc.getIntegratedServer().getWorldName();
 				if(worldName == null) {

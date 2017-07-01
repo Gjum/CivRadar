@@ -1,13 +1,10 @@
 package com.biggestnerd.civradar;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RadarHelper;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderHorse;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.*;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.EntityDonkey;
 import net.minecraft.entity.passive.EntityHorse;
-import net.minecraft.entity.passive.HorseType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import org.apache.logging.log4j.LogManager;
@@ -58,19 +55,23 @@ public class RadarEntity {
 			RenderManager renderManager = client.getRenderManager();
 			Render render = renderManager.getEntityRenderObject(entity);
 			ResourceLocation original;
+
 			if (render instanceof RenderHorse) {
 				EntityHorse horseEntity = (EntityHorse) entity;
 				int horseVariant = 0xff & horseEntity.getHorseVariant();
-				if(horseEntity.getType() == HorseType.HORSE) {
-					original = new ResourceLocation("minecraft", "textures/entity/horse/horse_" + HORSE_VARIANTS[horseVariant] + ".png");
-				} else {
-					original = RadarHelper.getEntityTexture(render, entity);
-				}
+
+				original = new ResourceLocation("minecraft", "textures/entity/horse/horse_" + HORSE_VARIANTS[horseVariant] + ".png");
+			} else if(render instanceof RenderLlama) {
+				original = new ResourceLocation("minecraft", "textures/entity/llama/llama.png");
+			} else if(render instanceof RenderParrot) {
+				original = new ResourceLocation("minecraft", "textures/entity/parrot/parrot.png");
+			} else if(render instanceof RenderShulker) {
+				original = new ResourceLocation("minecraft", "textures/entity/shulker/shulker.png");
 			} else {
 				original = RadarHelper.getEntityTexture(render, entity);
 			}
 
-			return new ResourceLocation(original.getResourceDomain(), original.getResourcePath().replace("/entity/", "/entity_icon_journeymap/"));
+			return new ResourceLocation(original.getResourceDomain(), original.getResourcePath().replace("textures/entity/", "icons/"));
 
 		} catch (Throwable e) {
 			logger.error("Can't get entityTexture for " + entity.getName(), e);
