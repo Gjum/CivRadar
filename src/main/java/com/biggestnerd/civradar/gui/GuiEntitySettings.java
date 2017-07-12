@@ -28,7 +28,8 @@ public class GuiEntitySettings extends GuiScreen implements GuiYesNoCallback {
 		this.parent = parent;
 		this.entityList = CivRadar.instance.getConfig().getEntities();
 	}
-	
+
+	@Override
 	public void initGui() {
 		this.buttonList.clear();
 		this.buttonList.add(opacitySlider = new GuiSlider(3, this.width / 2 -100, this.height - 63, 1.0F, 0.0F, "Icon Opacity", CivRadar.instance.getConfig().getIconOpacity()));
@@ -38,19 +39,21 @@ public class GuiEntitySettings extends GuiScreen implements GuiYesNoCallback {
 		this.entityListContainer = new EntityList(this.mc);
 		this.entityListContainer.registerScrollButtons(4, 5);
 	}
-	
+
+	@Override
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
 		this.entityListContainer.handleMouseInput();
 	}
-	
+
+	@Override
 	public void updateScreen() {
 		Config config = CivRadar.instance.getConfig();
 		config.setIconOpacity(opacitySlider.getCurrentValue());
 		CivRadar.instance.saveConfig();
 		opacitySlider.updateDisplayString();
 	}
-	
+
 	private void enableOrDisableSelectedEntity(boolean enabled) {
 		if(selected >= 0 && entityList.get(selected) != null)
 		{			
@@ -59,7 +62,8 @@ public class GuiEntitySettings extends GuiScreen implements GuiYesNoCallback {
 			CivRadar.instance.saveConfig();
 		}
 	}
-	
+
+	@Override
 	protected void actionPerformed(GuiButton button) throws IOException	 {
 		if(button.enabled) {
 			if(button.id == 0) {
@@ -73,11 +77,12 @@ public class GuiEntitySettings extends GuiScreen implements GuiYesNoCallback {
 			}
 		}
 	}
-	
+
+	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.entityListContainer.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRendererObj, "Edit enabled entities", this.width / 2, 20, 16777215);
+        this.drawCenteredString(this.fontRenderer, "Edit enabled entities", this.width / 2, 20, 16777215);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 	
@@ -86,34 +91,40 @@ public class GuiEntitySettings extends GuiScreen implements GuiYesNoCallback {
 		public EntityList(Minecraft mc) {
 			super(mc, GuiEntitySettings.this.width, GuiEntitySettings.this.height, 32, GuiEntitySettings.this.height - 64, 36);
 		}
-		
+
+		@Override
 		protected int getSize() {
 			return GuiEntitySettings.this.entityList.size();
 		}
-		
+
+		@Override
 		protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY) {
 			GuiEntitySettings.this.selected = slotIndex;
 			boolean isValidSlot = slotIndex >= 0 && slotIndex < getSize();
 			GuiEntitySettings.this.enableButton.enabled = isValidSlot;
 			GuiEntitySettings.this.disableButton.enabled = isValidSlot;
 		}
-		
+
+		@Override
 		protected boolean isSelected(int slotIndex) {
 			return slotIndex == GuiEntitySettings.this.selected;
 		}
-		
+
+		@Override
 		protected int getContentHeight() {
 			return getSize() * 36;
 		}
-		
+
+		@Override
 		protected void drawBackground() {
 			GuiEntitySettings.this.drawDefaultBackground();
 		}
-		
-		protected void drawSlot(int entryId, int par2, int par3, int par4, int par5, int par6) {
+
+		@Override
+		protected void drawSlot(int entryId, int par2, int par3, int par4, int par5, int par6, float par7) {
 			RadarEntity entity = GuiEntitySettings.this.entityList.get(entryId);
-			GuiEntitySettings.this.drawString(mc.fontRendererObj, entity.getEntityName(), par2 + 1, par3 + 1, Color.WHITE.getRGB());
-			GuiEntitySettings.this.drawString(mc.fontRendererObj, entity.isEnabled() ? "Enabled" : "Disabled", par2 + 215 - mc.fontRendererObj.getStringWidth("Disabled"), par3 + 1, entity.isEnabled() ? Color.GREEN.getRGB() : Color.RED.getRGB());
+			GuiEntitySettings.this.drawString(mc.fontRenderer, entity.getEntityName(), par2 + 1, par3 + 1, Color.WHITE.getRGB());
+			GuiEntitySettings.this.drawString(mc.fontRenderer, entity.isEnabled() ? "Enabled" : "Disabled", par2 + 215 - mc.fontRenderer.getStringWidth("Disabled"), par3 + 1, entity.isEnabled() ? Color.GREEN.getRGB() : Color.RED.getRGB());
 		}
 	}
 }

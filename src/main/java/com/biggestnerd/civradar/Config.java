@@ -11,35 +11,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.monster.EntityCaveSpider;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntityGolem;
-import net.minecraft.entity.monster.EntityGuardian;
-import net.minecraft.entity.monster.EntityIronGolem;
-import net.minecraft.entity.monster.EntityMagmaCube;
-import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.monster.EntitySilverfish;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntitySlime;
-import net.minecraft.entity.monster.EntitySnowman;
-import net.minecraft.entity.monster.EntitySpider;
-import net.minecraft.entity.monster.EntityWitch;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.passive.EntityCow;
-import net.minecraft.entity.passive.EntityHorse;
-import net.minecraft.entity.passive.EntityMooshroom;
-import net.minecraft.entity.passive.EntityOcelot;
-import net.minecraft.entity.passive.EntityPig;
-import net.minecraft.entity.passive.EntityRabbit;
-import net.minecraft.entity.passive.EntitySheep;
-import net.minecraft.entity.passive.EntitySquid;
-import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.entity.monster.*;
+import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.EntityPlayer;
 
 import com.google.gson.Gson;
@@ -69,7 +42,11 @@ public class Config {
 	private float pingVolume = 0.0F;
 
 	public Config() {
-		mobs = new ArrayList<RadarEntity>(Arrays.asList(new RadarEntity[]{
+		mobs = getAllMobs();
+	}
+
+	private static ArrayList<RadarEntity> getAllMobs() {
+		return new ArrayList<>(Arrays.asList(new RadarEntity[]{
 				new RadarEntity(EntityBat.class),
 				new RadarEntity(EntityChicken.class),
 				new RadarEntity(EntityCow.class),
@@ -103,7 +80,19 @@ public class Config {
 				new RadarEntity(EntityBoat.class),
 				new RadarEntity(EntityMinecart.class),
 				new RadarEntity(EntityPlayer.class),
-				}));
+				new RadarEntity(EntityMule.class),
+				new RadarEntity(EntityDonkey.class),
+				new RadarEntity(EntityLlama.class),
+				new RadarEntity(EntityParrot.class),
+				new RadarEntity(EntityPolarBear.class),
+				new RadarEntity(EntityShulker.class),
+				new RadarEntity(EntityHusk.class),
+				new RadarEntity(EntityEvoker.class),
+				new RadarEntity(EntityIllusionIllager.class),
+				new RadarEntity(EntityStray.class),
+				new RadarEntity(EntityVex.class),
+				new RadarEntity(EntityVindicator.class),
+		}));
 	}
 
 	public ArrayList<RadarEntity> getEntities() {
@@ -285,11 +274,30 @@ public class Config {
 	
 	public static Config load(File file) {
 		Gson gson = new Gson();
+
 		try {
-			return (Config) gson.fromJson(new FileReader(file), Config.class);
+			Config config = gson.fromJson(new FileReader(file), Config.class);
+
+			ArrayList<RadarEntity> allMobs = getAllMobs();
+
+			for (RadarEntity mob : allMobs) {
+				if (!isMobInList(mob, config.mobs))
+					config.mobs.add(mob);
+			}
+
+			return config;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		return new Config();
+	}
+
+	private static boolean isMobInList(RadarEntity mob, ArrayList<RadarEntity> list) {
+		for(RadarEntity current : list) {
+			if(current.getName().equalsIgnoreCase(mob.getName())) return true;
+		}
+
+		return false;
 	}
 }

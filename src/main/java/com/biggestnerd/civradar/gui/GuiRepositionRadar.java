@@ -20,7 +20,8 @@ public class GuiRepositionRadar extends GuiScreen {
 		this.parentScreen = parentScreen;
 		config = CivRadar.instance.getConfig();
 	}
-	
+
+	@Override
 	public void initGui() {
 		Keyboard.enableRepeatEvents(true);
 		this.buttonList.clear();
@@ -30,12 +31,14 @@ public class GuiRepositionRadar extends GuiScreen {
 		this.buttonList.add(new GuiButton(4, this.width / 2 + 1, 112, 100, 20, "Snap bottom right"));
 		this.buttonList.add(new GuiButton(5, this.width / 2 - 100, 134, "Done"));
 	}
-	
+
+	@Override
 	public void onGuiClosed() {
 		Keyboard.enableRepeatEvents(false);
 		CivRadar.instance.saveConfig();
 	}
-	
+
+	@Override
 	public void actionPerformed(GuiButton button) {
 		if(!button.enabled) {
 			return;
@@ -64,6 +67,7 @@ public class GuiRepositionRadar extends GuiScreen {
 		CivRadar.instance.saveConfig();
 	}
 
+	@Override
 	public void updateScreen() {
 		ScaledResolution res = new ScaledResolution(mc);
 		float xSpeed = 1.f / res.getScaledWidth();
@@ -83,9 +87,10 @@ public class GuiRepositionRadar extends GuiScreen {
 		}
 		CivRadar.instance.saveConfig();
 	}
-	
+
+	@Override
 	public void drawScreen(int i, int j, float k) {
-		drawCenteredString(mc.fontRendererObj, "Use arrow keys to reposition radar", this.width / 2, 80, Color.WHITE.getRGB());
+		drawCenteredString(mc.fontRenderer, "Use arrow keys to reposition radar", this.width / 2, 80, Color.WHITE.getRGB());
 		super.drawScreen(i, j, k);
 	}
 

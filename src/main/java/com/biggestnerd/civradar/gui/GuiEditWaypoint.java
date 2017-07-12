@@ -37,14 +37,15 @@ public class GuiEditWaypoint extends GuiScreen {
 		textFieldList = new ArrayList<GuiTextField>();
 		this.point = point;
 	}
-	
+
+	@Override
 	public void initGui() {
 		Keyboard.enableRepeatEvents(true);
 		this.buttonList.clear();
-		textFieldList.add(waypointNameField = new GuiTextField(1, fontRendererObj, this.width / 2 - 100, this.height / 4 - 16, 200, 20));
-		textFieldList.add(waypointXField = new GuiTextField(2, fontRendererObj, this.width / 2 - 100, this.height / 4 + 8, 64, 20));
-		textFieldList.add(waypointYField = new GuiTextField(2, fontRendererObj, this.width / 2 - 32, this.height / 4 + 8, 64, 20));
-		textFieldList.add(waypointZField = new GuiTextField(2, fontRendererObj, this.width / 2 + 36, this.height / 4 + 8, 64, 20));
+		textFieldList.add(waypointNameField = new GuiTextField(1, fontRenderer, this.width / 2 - 100, this.height / 4 - 16, 200, 20));
+		textFieldList.add(waypointXField = new GuiTextField(2, fontRenderer, this.width / 2 - 100, this.height / 4 + 8, 64, 20));
+		textFieldList.add(waypointYField = new GuiTextField(2, fontRenderer, this.width / 2 - 32, this.height / 4 + 8, 64, 20));
+		textFieldList.add(waypointZField = new GuiTextField(2, fontRenderer, this.width / 2 + 36, this.height / 4 + 8, 64, 20));
 		waypointNameField.setText(point.getName());
 		waypointXField.setText(String.valueOf((int)point.getX()));
 		waypointYField.setText(String.valueOf((int)point.getY()));
@@ -55,7 +56,8 @@ public class GuiEditWaypoint extends GuiScreen {
 		this.buttonList.add(saveButton = new GuiButton(100, this.width / 2 - 100, this.height / 4 + 152, "Save"));
 		waypointNameField.setFocused(true);
 	}
-	
+
+	@Override
 	public void updateScreen() {
 		redSlider.updateDisplayString();
 		greenSlider.updateDisplayString();
@@ -75,11 +77,13 @@ public class GuiEditWaypoint extends GuiScreen {
 			saveButton.enabled = true;
 		}
 	}
-	
+
+	@Override
 	public void onGuiClosed() {
 		Keyboard.enableRepeatEvents(false);
 	}
-	
+
+	@Override
 	public void mouseClicked(int x, int y, int mouseButton) {
 		try {
 			super.mouseClicked(x, y, mouseButton);
@@ -90,7 +94,8 @@ public class GuiEditWaypoint extends GuiScreen {
 			field.mouseClicked(x, y, mouseButton);
 		}
 	}
-	
+
+	@Override
 	public void actionPerformed(GuiButton button) {
 		if(button.enabled) {
 			if(button.id == 100) {
@@ -108,7 +113,8 @@ public class GuiEditWaypoint extends GuiScreen {
 			}
 		}
 	}
-	
+
+	@Override
 	public void keyTyped(char keyChar, int keyCode) {
 		for(int i = 0; i < textFieldList.size(); i++) {
 			if(textFieldList.get(i).isFocused()) {
@@ -119,10 +125,11 @@ public class GuiEditWaypoint extends GuiScreen {
 			mc.displayGuiScreen(parent);
 		}
 	}
-	
+
+	@Override
 	public void drawScreen(int i, int j, float k) {
 		drawDefaultBackground();
-		drawCenteredString(this.fontRendererObj, "Edit Waypoint", this.width / 2, this.height / 4 - 40, Color.WHITE.getRGB());
+		drawCenteredString(this.fontRenderer, "Edit Waypoint", this.width / 2, this.height / 4 - 40, Color.WHITE.getRGB());
 		for(GuiTextField field : textFieldList) {
 			field.drawTextBox();
 		}

@@ -10,7 +10,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
@@ -61,9 +61,9 @@ public class RenderHandler extends Gui {
 
 	@SubscribeEvent
 	public void onTick(ClientTickEvent event) {
-		if (event.phase == TickEvent.Phase.START && mc.theWorld != null) {
+		if (event.phase == TickEvent.Phase.START && mc.world != null) {
 			pingTicks -= 1;
-			entityList = mc.theWorld.loadedEntityList;
+			entityList = mc.world.loadedEntityList;
 			ArrayList<String> newInRangePlayers = new ArrayList<String>();
 			for (Entity e : entityList) {
 				if (e instanceof EntityOtherPlayerMP) {
@@ -76,7 +76,7 @@ public class RenderHandler extends Gui {
 
 			for (String name : newInRangePlayers) {
 				float playerPitch = .5f + 1.5f * new Random(name.hashCode()).nextFloat(); // unique for each player, but always the same
-				mc.thePlayer.playSound(new SoundEvent(new ResourceLocation("block.note.pling")), config.getPingVolume(), playerPitch);
+				mc.player.playSound(new SoundEvent(new ResourceLocation("block.note.pling")), config.getPingVolume(), playerPitch);
 				pingTicks = 20;
 			}
 		}
@@ -89,7 +89,7 @@ public class RenderHandler extends Gui {
 		}
 		if (config.isRenderWaypoints()) {
 			for (Waypoint point : CivRadar.instance.getWaypointSave().getWaypoints()) {
-				if (point.getDimension() == mc.theWorld.provider.getDimension() && point.isEnabled()) {
+				if (point.getDimension() == mc.world.provider.getDimension() && point.isEnabled()) {
 					renderWaypoint(point, event);
 				}
 			}
@@ -117,12 +117,12 @@ public class RenderHandler extends Gui {
 		GlStateManager.translate(radarDisplayX, radarDisplayY, 0);
 
 		if (config.isRenderCoordinates()) {
-			String coords = "(" + (int) Math.floor(mc.thePlayer.posX) + "," + (int) Math.floor(mc.thePlayer.posY) + "," + (int) Math.floor(mc.thePlayer.posZ) + ")";
-			int  stringX = -(mc.fontRendererObj.getStringWidth(coords) / 2);
-			mc.fontRendererObj.drawStringWithShadow(coords, stringX, radarDisplayRadius, 0xe0e0e0);
+			String coords = "(" + (int) Math.floor(mc.player.posX) + "," + (int) Math.floor(mc.player.posY) + "," + (int) Math.floor(mc.player.posZ) + ")";
+			int  stringX = -(mc.fontRenderer.getStringWidth(coords) / 2);
+			mc.fontRenderer.drawStringWithShadow(coords, stringX, radarDisplayRadius, 0xe0e0e0);
 		}
 
-		GlStateManager.rotate(-mc.thePlayer.rotationYaw, 0.0F, 0.0F, 1.0F);
+		GlStateManager.rotate(-mc.player.rotationYaw, 0.0F, 0.0F, 1.0F);
 
 		// background
 		drawCircle(0, 0, radarDisplayRadius, radarColor, true);
@@ -178,7 +178,7 @@ public class RenderHandler extends Gui {
 		GlStateManager.popMatrix();
 
 		// player location
-		GlStateManager.rotate(mc.thePlayer.rotationYaw, 0.0F, 0.0F, 1.0F);
+		GlStateManager.rotate(mc.player.rotationYaw, 0.0F, 0.0F, 1.0F);
 		drawTriangle(0, 0, Color.WHITE);
 
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -192,7 +192,7 @@ public class RenderHandler extends Gui {
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.color(c.getRed() / 255.0F, c.getGreen() / 255.0F, c.getBlue() / 255.0F, filled ? config.getRadarOpacity() : config.getRadarOpacity() + 0.5F);
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer buffer = tessellator.getBuffer();
+		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(filled ? GL11.GL_TRIANGLE_FAN : GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
 		for (int i = 0; i <= 360; i++) {
 			double x2 = Math.sin(i * Math.PI / 180.0D) * radius;
@@ -213,7 +213,7 @@ public class RenderHandler extends Gui {
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer buffer = tessellator.getBuffer();
+		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION);
 		buffer.pos(x, y + 3, 0.0D).endVertex();
 		buffer.pos(x + 3, y - 3, 0.0D).endVertex();
@@ -230,13 +230,13 @@ public class RenderHandler extends Gui {
 			return;
 		}
 		for (Entity e : entityList) {
-			if (mc.thePlayer.getDistanceSq(e.posX, mc.thePlayer.posY, e.posZ) > config.getRadarDistance() * config.getRadarDistance())
+			if (mc.player.getDistanceSq(e.posX, mc.player.posY, e.posZ) > config.getRadarDistance() * config.getRadarDistance())
 				continue; // outside radar range
-			if (e == mc.thePlayer)
+			if (e == mc.player)
 				continue;
 
-			double playerPosX = mc.thePlayer.posX;
-			double playerPosZ = mc.thePlayer.posZ;
+			double playerPosX = mc.player.posX;
+			double playerPosZ = mc.player.posZ;
 			double entityPosX = e.posX;
 			double entityPosZ = e.posZ;
 			double displayPosX = playerPosX - entityPosX;
@@ -244,7 +244,7 @@ public class RenderHandler extends Gui {
 			if (e instanceof EntityItem) {
 				EntityItem item = (EntityItem) e;
 				if (config.isRender(EntityItem.class)) {
-					renderItemIcon(displayPosX, displayPosZ, item.getEntityItem());
+					renderItemIcon(displayPosX, displayPosZ, item.getItem());
 				}
 			} else if (e instanceof EntityOtherPlayerMP) {
 				if (config.isRender(EntityPlayer.class)) {
@@ -277,7 +277,7 @@ public class RenderHandler extends Gui {
 	private void renderItemIcon(double x, double y, ItemStack item) {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, 0);
-		GlStateManager.rotate(mc.thePlayer.rotationYaw, 0.0F, 0.0F, 1.0F);
+		GlStateManager.rotate(mc.player.rotationYaw, 0.0F, 0.0F, 1.0F);
 		GlStateManager.scale(iconScale, iconScale, iconScale);
 
 		mc.getRenderItem().renderItemIntoGUI(item, -8, -8);
@@ -292,7 +292,7 @@ public class RenderHandler extends Gui {
 
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, 0);
-		GlStateManager.rotate(mc.thePlayer.rotationYaw, 0.0F, 0.0F, 1.0F);
+		GlStateManager.rotate(mc.player.rotationYaw, 0.0F, 0.0F, 1.0F);
 
 		GlStateManager.pushMatrix();
 		GlStateManager.scale(iconScale, iconScale, iconScale);
@@ -308,7 +308,7 @@ public class RenderHandler extends Gui {
 					Gui.drawScaledCustomSizeModalRect(-8, -8, 40, 8, 8, 8, 16, 16, 64, 64);
 				}
 			} else {
-				this.mc.getTextureManager().bindTexture(new ResourceLocation("civRadar/icons/player.png"));
+				this.mc.getTextureManager().bindTexture(new ResourceLocation("civRadar/entity/player.png"));
 				Gui.drawScaledCustomSizeModalRect(-8, -8, 0, 0, 8, 8, 16, 16, 8, 8);
 			}
 		} catch (Exception e) {
@@ -325,10 +325,10 @@ public class RenderHandler extends Gui {
 
 			String playerName = player.getName();
 			if (config.isExtraPlayerInfo()) {
-				playerName += " (" + (int) mc.thePlayer.getDistanceToEntity(player) + "m)(Y" + (int) player.posY + ")";
+				playerName += " (" + (int) mc.player.getDistanceToEntity(player) + "m)(Y" + (int) player.posY + ")";
 			}
 			int yOffset = -4 + (int) ((config.getIconScale() * radarScale + 8) * (config.getNameLocation() == NameLocation.below ? 1 : -1));
-			drawCenteredString(mc.fontRendererObj, playerName, 0, yOffset, Color.WHITE.getRGB());
+			drawCenteredString(mc.fontRenderer, playerName, 0, yOffset, Color.WHITE.getRGB());
 
 			GlStateManager.popMatrix();
 		}
@@ -343,7 +343,7 @@ public class RenderHandler extends Gui {
 
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, 0);
-		GL11.glRotatef(mc.thePlayer.rotationYaw, 0.0F, 0.0F, 1.0F);
+		GL11.glRotatef(mc.player.rotationYaw, 0.0F, 0.0F, 1.0F);
 		GlStateManager.scale(iconScale, iconScale, iconScale);
 
 		drawModalRectWithCustomSizedTexture(-8, -8, 0, 0, 16, 16, 16, 16);
@@ -363,14 +363,14 @@ public class RenderHandler extends Gui {
 		double distance = point.getDistance(mc);
 		int maxView = mc.gameSettings.renderDistanceChunks * 22;
 		if (distance <= config.getMaxWaypointDistance() || config.getMaxWaypointDistance() < 0) {
-			FontRenderer fr = mc.fontRendererObj;
+			FontRenderer fr = mc.fontRenderer;
 			Tessellator tess = Tessellator.getInstance();
-			VertexBuffer vb = tess.getBuffer();
+			BufferBuilder vb = tess.getBuffer();
 			RenderManager rm = mc.getRenderManager();
 
-			float playerX = (float) (mc.thePlayer.lastTickPosX + (mc.thePlayer.posX - mc.thePlayer.lastTickPosX) * partialTickTime);
-			float playerY = (float) (mc.thePlayer.lastTickPosY + (mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * partialTickTime);
-			float playerZ = (float) (mc.thePlayer.lastTickPosZ + (mc.thePlayer.posZ - mc.thePlayer.lastTickPosZ) * partialTickTime);
+			float playerX = (float) (mc.player.lastTickPosX + (mc.player.posX - mc.player.lastTickPosX) * partialTickTime);
+			float playerY = (float) (mc.player.lastTickPosY + (mc.player.posY - mc.player.lastTickPosY) * partialTickTime);
+			float playerZ = (float) (mc.player.lastTickPosZ + (mc.player.posZ - mc.player.lastTickPosZ) * partialTickTime);
 
 			float displayX = (float) point.getX() - playerX;
 			float displayY = (float) point.getY() + 1.3f - playerY;

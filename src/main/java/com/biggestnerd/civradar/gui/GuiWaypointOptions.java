@@ -77,7 +77,7 @@ public class GuiWaypointOptions extends GuiScreen {
 	
 	public void drawScreen(int i, int j, float f) {
 		drawDefaultBackground();
-		drawCenteredString(mc.fontRendererObj, "Waypoint Options", this.width / 2, 30, Color.WHITE.getRGB());
+		drawCenteredString(mc.fontRenderer, "Waypoint Options", this.width / 2, 30, Color.WHITE.getRGB());
 		super.drawScreen(i, j, f);
 	}
 }

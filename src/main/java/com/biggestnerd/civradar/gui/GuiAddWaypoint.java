@@ -37,17 +37,18 @@ public class GuiAddWaypoint extends GuiScreen {
 		waypoints = CivRadar.instance.getWaypointSave();
 		textFieldList = new ArrayList<GuiTextField>();
 	}
-	
+
+	@Override
 	public void initGui() {
 		Keyboard.enableRepeatEvents(true);
 		this.buttonList.clear();
-		textFieldList.add(waypointNameField = new GuiTextField(1, fontRendererObj, this.width / 2 - 100, this.height / 4 - 16, 200, 20));
-		textFieldList.add(waypointXField = new GuiTextField(2, fontRendererObj, this.width / 2 - 100, this.height / 4 + 8, 64, 20));
-		textFieldList.add(waypointYField = new GuiTextField(2, fontRendererObj, this.width / 2 - 32, this.height / 4 + 8, 64, 20));
-		textFieldList.add(waypointZField = new GuiTextField(2, fontRendererObj, this.width / 2 + 36, this.height / 4 + 8, 64, 20));
-		waypointXField.setText("" + (int) mc.thePlayer.posX);
-		waypointYField.setText("" + (int) mc.thePlayer.posY);
-		waypointZField.setText("" + (int) mc.thePlayer.posZ);
+		textFieldList.add(waypointNameField = new GuiTextField(1, fontRenderer, this.width / 2 - 100, this.height / 4 - 16, 200, 20));
+		textFieldList.add(waypointXField = new GuiTextField(2, fontRenderer, this.width / 2 - 100, this.height / 4 + 8, 64, 20));
+		textFieldList.add(waypointYField = new GuiTextField(2, fontRenderer, this.width / 2 - 32, this.height / 4 + 8, 64, 20));
+		textFieldList.add(waypointZField = new GuiTextField(2, fontRenderer, this.width / 2 + 36, this.height / 4 + 8, 64, 20));
+		waypointXField.setText("" + (int) mc.player.posX);
+		waypointYField.setText("" + (int) mc.player.posY);
+		waypointZField.setText("" + (int) mc.player.posZ);
 		Random random = new Random();
 		this.buttonList.add(redSlider = new GuiSlider(0, this.width / 2 - 100, this.height / 4 + 32, 1.0F, 0.0F, "Red", random.nextFloat()));
 		this.buttonList.add(greenSlider = new GuiSlider(0, this.width / 2 - 100, this.height / 4 + 56, 1.0F, 0.0F, "Green", random.nextFloat()));
@@ -55,7 +56,8 @@ public class GuiAddWaypoint extends GuiScreen {
 		this.buttonList.add(saveButton = new GuiButton(100, this.width / 2 - 100, this.height / 4 + 152, "Save"));
 		waypointNameField.setFocused(true);
 	}
-	
+
+	@Override
 	public void updateScreen() {
 		redSlider.updateDisplayString();
 		greenSlider.updateDisplayString();
@@ -75,11 +77,13 @@ public class GuiAddWaypoint extends GuiScreen {
 			saveButton.enabled = true;
 		}
 	}
-	
+
+	@Override
 	public void onGuiClosed() {
 		Keyboard.enableRepeatEvents(false);
 	}
-	
+
+	@Override
 	public void mouseClicked(int x, int y, int mouseButton) {
 		try {
 			super.mouseClicked(x, y, mouseButton);
@@ -90,7 +94,8 @@ public class GuiAddWaypoint extends GuiScreen {
 			field.mouseClicked(x, y, mouseButton);
 		}
 	}
-	
+
+	@Override
 	public void actionPerformed(GuiButton button) {
 		if(button.enabled) {
 			if(button.id == 100) {
@@ -107,7 +112,8 @@ public class GuiAddWaypoint extends GuiScreen {
 			}
 		}
 	}
-	
+
+	@Override
 	public void keyTyped(char keyChar, int keyCode) {
 		for(int i = 0; i < textFieldList.size(); i++) {
 			if(textFieldList.get(i).isFocused()) {
@@ -118,10 +124,11 @@ public class GuiAddWaypoint extends GuiScreen {
 			mc.displayGuiScreen(parent);
 		}
 	}
-	
+
+	@Override
 	public void drawScreen(int i, int j, float k) {
 		drawDefaultBackground();
-		drawCenteredString(this.fontRendererObj, "Add Waypoint", this.width / 2, this.height / 4 - 40, Color.WHITE.getRGB());
+		drawCenteredString(this.fontRenderer, "Add Waypoint", this.width / 2, this.height / 4 - 40, Color.WHITE.getRGB());
 		for(GuiTextField field : textFieldList) {
 			field.drawTextBox();
 		}

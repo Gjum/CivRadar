@@ -23,7 +23,8 @@ public class GuiRadarOptions extends GuiScreen {
 	public GuiRadarOptions(GuiScreen parentScreen) {
 		this.parentScreen = parentScreen;
 	}
-	
+
+	@Override
 	public void initGui() {
 		Keyboard.enableRepeatEvents(true);
 
@@ -50,12 +51,14 @@ public class GuiRadarOptions extends GuiScreen {
 		this.buttonList.add(radarButton = new GuiButton(9, this.width / 2 - 100, y, 100, 20, "Radar: "));
 		this.buttonList.add(new GuiButton(100, this.width / 2 + 1, y, 100, 20, "Done"));
 	}
-	
+
+	@Override
 	public void onGuiClosed() {
 		Keyboard.enableRepeatEvents(false);
 		CivRadar.instance.saveConfig();
 	}
-	
+
+	@Override
 	public void actionPerformed(GuiButton guiButton) {
 		if(!guiButton.enabled)
 			return;
@@ -87,7 +90,8 @@ public class GuiRadarOptions extends GuiScreen {
 			mc.displayGuiScreen(parentScreen);
 		}
 	}
-	
+
+	@Override
 	public void updateScreen() {
 		Config config = CivRadar.instance.getConfig();
 		config.setRadarOpacity(opacitySlider.getCurrentValue());
@@ -105,10 +109,11 @@ public class GuiRadarOptions extends GuiScreen {
 		iconScaleSlider.updateDisplayString();
 		radarDistanceSlider.setDisplayString("" + config.getRadarDistance());
 	}
-	
+
+	@Override
 	public void drawScreen(int i, int j, float k) {
 		drawDefaultBackground();
-		drawCenteredString(this.fontRendererObj, "CivRadar Options", this.width / 2, this.height / 4 - 40, Color.WHITE.getRGB());
+		drawCenteredString(this.fontRenderer, "CivRadar Options", this.width / 2, this.height / 4 - 40, Color.WHITE.getRGB());
 		super.drawScreen(i, j, k);
 	}
 }
