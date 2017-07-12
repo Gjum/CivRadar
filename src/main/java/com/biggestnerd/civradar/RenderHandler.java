@@ -117,7 +117,7 @@ public class RenderHandler extends Gui {
 		GlStateManager.translate(radarDisplayX, radarDisplayY, 0);
 
 		if (config.isRenderCoordinates()) {
-			String coords = "(" + (int) mc.player.posX + "," + (int) mc.player.posY + "," + (int) mc.player.posZ + ")";
+			String coords = "(" + (int) Math.floor(mc.player.posX) + "," + (int) Math.floor(mc.player.posY) + "," + (int) Math.floor(mc.player.posZ) + ")";
 			int  stringX = -(mc.fontRenderer.getStringWidth(coords) / 2);
 			mc.fontRenderer.drawStringWithShadow(coords, stringX, radarDisplayRadius, 0xe0e0e0);
 		}
